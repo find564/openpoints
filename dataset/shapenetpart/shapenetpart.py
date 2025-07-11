@@ -234,19 +234,19 @@ class ShapeNetPartNormal(Dataset):
         if presample and not os.path.exists(filename):
             np.random.seed(0)
             self.data, self.cls = [], []
-            npoints = []
+            l_npoints = []
             for cat, filepath in tqdm(self.datapath, desc=f'Sample ShapeNetPart {split} split'):
                 cls = self.classes[cat]
                 cls = np.array([cls]).astype(np.int64)
                 data = np.loadtxt(filepath).astype(np.float32)
-                npoints.append(len(data))
+                l_npoints.append(len(data))
                 data = torch.from_numpy(data).to(
                     torch.float32).cuda().unsqueeze(0)
                 data = fps(data, num_points).cpu().numpy()[0]
                 self.data.append(data)
                 self.cls.append(cls)
-            logging.info('split: %s, median npoints %.1f, avg num points %.1f, std %.1f' % (
-                split, np.median(npoints), np.average(npoints), np.std(npoints)))
+            logging.info('split: %s, median npoints %.1f, avg num points %.1f, std %.1f, sampled %d' % (
+                split, np.median(l_npoints), np.average(l_npoints), np.std(l_npoints), len(data)))
             os.makedirs(os.path.join(data_root, 'processed'), exist_ok=True)
             with open(filename, 'wb') as f:
                 pickle.dump((self.data, self.cls), f)

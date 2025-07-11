@@ -153,7 +153,7 @@ def fps(data, number):
     fps_idx = furthest_point_sample(data[:, :, :3].contiguous(), number)
     fps_data = torch.gather(
         data, 1, fps_idx.unsqueeze(-1).long().expand(-1, -1, data.shape[-1]))
-    return fps_data
+    return fps_data, fps_idx
 
 
 if __name__ == '__main__':
